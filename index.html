@@ -919,6 +919,15 @@
 
   <!-- Application Script -->
   <script src="app.js"></script>
+  <link rel="stylesheet" href="https://vdk-viber-runtime-prod.bot.botpress.host/edge/webchat.css" />
+<script src="https://vdk-viber-runtime-prod.bot.botpress.host/edge/webchat.js"></script>
+<script>
+  fetch("https://vdk-viber-runtime-prod.bot.botpress.host/edge/bots/e47deaa0-2cf7-4572-9fc0-e6bb824cd12b/config")
+    .then((res) => res.json())
+    .then(({ webchat }) =>
+      VdkEdgeWebchat.mount({ ...webchat, mode: "bubble", baseUrl: "https://vdk-viber-runtime-prod.bot.botpress.host", botId: "e47deaa0-2cf7-4572-9fc0-e6bb824cd12b" })
+    )
+</script>
 </body>
 </html>
 
