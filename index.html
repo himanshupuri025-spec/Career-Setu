@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareerSetu AI — Smart AI Career Advisor for India</title>
+  <meta name="description" content="AI-powered career guidance, salary benchmarks in ₹ LPA, tailored roadmaps, and entrance exam mappings designed specifically for students and young professionals in India.">
+  
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== HEADER & NAVBAR ==================== -->
+  <header class="app-header" id="app-header">
+    <div class="nav-container">
+      <div class="brand" role="button" tabindex="0" onclick="navigateToSection('hero')">
+        <div class="brand-logo">
+          <i class="fa-solid fa-compass-drafting"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Career<span class="gradient-text">Setu</span></span>
+          <span class="brand-badge">India Edition</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <a href="#assessment" class="nav-link" onclick="handleNavClick(event, 'assessment')">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Assessment</span>
+        </a>
+        <a href="#recommendations" class="nav-link" id="nav-recommendations" onclick="handleNavClick(event, 'recommendations')">
+          <i class="fa-solid fa-sparkles"></i>
+          <span>Recommendations</span>
+        </a>
+        <a href="#saved" class="nav-link" onclick="handleNavClick(event, 'saved')">
+          <i class="fa-solid fa-bookmark"></i>
+          <span>Saved Paths</span>
+          <span class="badge-count" id="saved-count-badge">0</span>
+        </a>
+        <button class="nav-link btn-ghost-link" onclick="toggleMentorDrawer()">
+          <i class="fa-solid fa-robot"></i>
+          <span>AI Mentor</span>
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openApiModal()" title="Configure OpenAI/Gemini API key">
+          <i class="fa-solid fa-key"></i>
+          <span class="api-status-label" id="api-status-indicator">Built-in AI</span>
+        </button>
+        <button class="btn btn-primary btn-sm btn-pulse" onclick="startAssessmentFlow()">
+          <span>Start Assessment</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="mobile-drawer-header">
+      <span class="brand-name">Career<span class="gradient-text">Setu</span></span>
+      <button class="icon-btn" onclick="closeMobileDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="mobile-nav-items">
+      <button class="mobile-nav-item" onclick="startAssessmentFlow(); closeMobileDrawer();">
+        <i class="fa-solid fa-play"></i> Start Assessment
+      </button>
+      <button class="mobile-nav-item" onclick="navigateToSection('recommendations'); closeMobileDrawer();">
+        <i class="fa-solid fa-sparkles"></i> Career Dashboard
+      </button>
+      <button class="mobile-nav-item" onclick="navigateToSection('saved'); closeMobileDrawer();">
+        <i class="fa-solid fa-bookmark"></i> My Saved Paths & Plan (<span id="saved-count-mobile">0</span>)
+      </button>
+      <button class="mobile-nav-item" onclick="toggleMentorDrawer(); closeMobileDrawer();">
+        <i class="fa-solid fa-robot"></i> Ask AI Mentor
+      </button>
+      <button class="mobile-nav-item" onclick="openApiModal(); closeMobileDrawer();">
+        <i class="fa-solid fa-sliders"></i> LLM API Settings
+      </button>
+    </div>
+  </div>
+  <div class="backdrop" id="mobile-backdrop" onclick="closeMobileDrawer()"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="main-content">
+
+    <!-- ==================== HERO / LANDING SECTION ==================== -->
+    <section class="hero-section" id="hero">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+      
+      <div class="container hero-container">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Designed for Indian Students &amp; Young Professionals</span>
+          <span class="badge-flag">🇮🇳</span>
+        </div>
+
+        <h1 class="hero-title">
+          Find your ideal career path with <span class="gradient-text">AI-driven Indian market intelligence</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Personalized career roadmaps, realistic Indian compensation trends in <strong>₹ LPA</strong>, 
+          competitive exam mappings (JEE, CAT, UPSC, GATE), and an interactive 24/7 AI mentor.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn btn-primary btn-lg btn-glow" onclick="startAssessmentFlow()">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Start Free 2-Min Assessment</span>
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="toggleMentorDrawer('How do I choose between corporate tech and government exams in India?')">
+            <i class="fa-solid fa-comments"></i>
+            <span>Ask AI Mentor a Question</span>
+          </button>
+        </div>
+
+        <!-- Trust Badges & Metrics -->
+        <div class="hero-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            <div class="stat-info">
+              <span class="stat-val">₹6L to ₹50L+</span>
+              <span class="stat-label">Realistic Indian Salary Trajectories</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="stat-info">
+              <span class="stat-val">30+ Career Tracks</span>
+              <span class="stat-label">From Tech &amp; FinTech to UPSC &amp; Design</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+            <div class="stat-info">
+              <span class="stat-val">Actionable Roadmaps</span>
+              <span class="stat-label">Top Indian Colleges, Exams &amp; Skills</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trending Pills -->
+        <div class="trending-bar">
+          <span class="trending-title"><i class="fa-solid fa-fire text-amber"></i> Trending in India:</span>
+          <div class="trending-tags">
+            <button class="tag-chip" onclick="quickFilterFromHero('Artificial Intelligence & Machine Learning')">AI &amp; Data Engineer</button>
+            <button class="tag-chip" onclick="quickFilterFromHero('Product Management')">Product Manager</button>
+            <button class="tag-chip" onclick="quickFilterFromHero('Investment Banking & Equity Research')">Investment Banking &amp; FinTech</button>
+            <button class="tag-chip" onclick="quickFilterFromHero('UI/UX & Product Design')">UI/UX Design</button>
+            <button class="tag-chip" onclick="quickFilterFromHero('Civil Services Officer (IAS/IPS/IFS)')">Civil Services (UPSC)</button>
+            <button class="tag-chip" onclick="quickFilterFromHero('Cloud & DevOps Architecture')">Cloud &amp; DevOps</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== INTERACTIVE MULTI-STEP ASSESSMENT ==================== -->
+    <section class="assessment-section" id="assessment">
+      <div class="container">
+        
+        <div class="assessment-card card-glass">
+          
+          <!-- Wizard Header & Progress -->
+          <div class="wizard-header">
+            <div class="wizard-meta">
+              <span class="step-indicator" id="step-indicator-text">Step 1 of 5</span>
+              <h2 class="step-title" id="step-title">What is your current education level?</h2>
+              <p class="step-subtitle" id="step-subtitle">Tell us where you are in your academic or professional journey in India.</p>
+            </div>
+            
+            <div class="progress-wrapper">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progress-bar-fill" style="width: 20%;"></div>
+              </div>
+              <span class="progress-pct" id="progress-pct-text">20%</span>
+            </div>
+          </div>
+
+          <!-- Wizard Step Containers -->
+          <div class="wizard-body">
+
+            <!-- STEP 1: EDUCATION LEVEL -->
+            <div class="wizard-step active" id="wizard-step-1">
+              <div class="options-grid education-grid">
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Class 10 Student">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-school"></i></div>
+                    <div class="option-title">Class 10 Student</div>
+                    <div class="option-desc">Deciding between Science (PCM/PCB), Commerce, or Humanities stream.</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Class 12 - Science (PCM)">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-atom"></i></div>
+                    <div class="option-title">Class 12 — Science (PCM)</div>
+                    <div class="option-desc">Physics, Chemistry, Maths (JEE, B.Tech, Architecture, Defence).</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Class 12 - Science (PCB)">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-dna"></i></div>
+                    <div class="option-title">Class 12 — Science (PCB)</div>
+                    <div class="option-desc">Physics, Chemistry, Biology (NEET, MBBS, Biotech, Pharma, Allied Health).</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Class 12 - Commerce">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="option-title">Class 12 — Commerce</div>
+                    <div class="option-desc">Accountancy, Economics, Business (B.Com, CA, CS, BBA, Finance).</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Class 12 - Arts / Humanities">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-palette"></i></div>
+                    <div class="option-title">Class 12 — Arts / Humanities</div>
+                    <div class="option-desc">History, Psychology, Political Science (BA, Law/CLAT, Design, UPSC).</div>
+                  </div>
+                </label>
+
+                <label class="option-card selected" data-group="education">
+                  <input type="radio" name="educationLevel" value="Undergraduate (Engineering / Tech)" checked>
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                    <div class="option-title">Undergraduate (B.Tech / BCA / B.Sc IT)</div>
+                    <div class="option-desc">Exploring software, data, product, gate, or early job switches.</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Undergraduate (Commerce / Management)">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="option-title">Undergraduate (B.Com / BBA / BMS / Eco)</div>
+                    <div class="option-desc">Targeting FinTech, analytics, corporate banking, CAT/MBA.</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Undergraduate (Arts / Science / Law / Other)">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+                    <div class="option-title">Undergraduate (BA / B.Sc / LLB / Medical)</div>
+                    <div class="option-desc">Specializing, pivoting to corporate, or planning competitive exams.</div>
+                  </div>
+                </label>
+
+                <label class="option-card" data-group="education">
+                  <input type="radio" name="educationLevel" value="Working Professional (0-3 yrs)">
+                  <div class="option-card-content">
+                    <div class="option-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="option-title">Working Professional (0–3 Years)</div>
+                    <div class="option-desc">Looking to upskill, transition into higher-paying domains, or pursue an MBA.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- STEP 2: CORE INTERESTS & PASSIONS (Multi-select) -->
+            <div class="wizard-step" id="wizard-step-2">
+              <div class="step-help-badge">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Select 2 to 5 areas that genuinely excite you:</span>
+              </div>
+              <div class="tags-selection-grid" id="interests-grid">
+                <!-- Dynamically populated via JS for rich icons & interactions -->
+              </div>
+            </div>
+
+            <!-- STEP 3: KEY STRENGTHS & SKILLS (Multi-select) -->
+            <div class="wizard-step" id="wizard-step-3">
+              <div class="step-help-badge">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Select 2 to 5 skills you excel at or want to build upon:</span>
+              </div>
+              <div class="tags-selection-grid" id="strengths-grid">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+
+            <!-- STEP 4: WORK STYLE PREFERENCE -->
+            <div class="wizard-step" id="wizard-step-4">
+              <div class="workstyle-form-layout">
+                
+                <div class="form-subsection">
+                  <label class="form-sublabel"><i class="fa-solid fa-house-laptop"></i> Preferred Work Environment</label>
+                  <div class="sub-options-row" id="work-env-group">
+                    <button type="button" class="pill-option active" data-val="Remote / Desk-based">
+                      <i class="fa-solid fa-laptop"></i> Remote / Desk-based
+                    </button>
+                    <button type="button" class="pill-option" data-val="Hybrid (Mix of Office & Home)">
+                      <i class="fa-solid fa-building-user"></i> Hybrid
+                    </button>
+                    <button type="button" class="pill-option" data-val="Fieldwork & On-ground Action">
+                      <i class="fa-solid fa-person-walking-luggage"></i> Fieldwork / Travel
+                    </button>
+                    <button type="button" class="pill-option" data-val="Lab / Hospital / Specialized Facility">
+                      <i class="fa-solid fa-flask-vial"></i> Lab / Facility
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-subsection">
+                  <label class="form-sublabel"><i class="fa-solid fa-building"></i> Company / Organization Type</label>
+                  <div class="sub-options-row" id="org-type-group">
+                    <button type="button" class="pill-option active" data-val="High-Growth Indian Startup">
+                      <i class="fa-solid fa-rocket text-amber"></i> High-Growth Startup (Fast learning, ESOPs)
+                    </button>
+                    <button type="button" class="pill-option" data-val="Stable Corporate MNC">
+                      <i class="fa-solid fa-gem text-indigo"></i> Global MNC / Established Corporate
+                    </button>
+                    <button type="button" class="pill-option" data-val="Government / Civil Services / PSU">
+                      <i class="fa-solid fa-landmark text-emerald"></i> Govt / Civil Services / PSU (Prestige & Security)
+                    </button>
+                    <button type="button" class="pill-option" data-val="Independent Practice / Freelance">
+                      <i class="fa-solid fa-user-tie"></i> Freelance / Solo Practice
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-subsection">
+                  <label class="form-sublabel"><i class="fa-solid fa-users"></i> Team Dynamic Preference</label>
+                  <div class="sub-options-row" id="team-dynamic-group">
+                    <button type="button" class="pill-option active" data-val="Collaborative Cross-Functional Team">
+                      <i class="fa-solid fa-people-group"></i> Collaborative Team (Brainstorming &amp; Syncs)
+                    </button>
+                    <button type="button" class="pill-option" data-val="Independent Contributor (Deep Focus)">
+                      <i class="fa-solid fa-headset"></i> Independent / Deep Focus
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- STEP 5: SPECIFIC GOALS, SALARY & CONSTRAINTS -->
+            <div class="wizard-step" id="wizard-step-5">
+              <div class="goals-form-layout">
+                
+                <div class="form-row-2col">
+                  <div class="form-group">
+                    <label class="form-label" for="salary-expectation">
+                      <i class="fa-solid fa-indian-rupee-sign text-emerald"></i> Target Starting / Next Salary (India)
+                    </label>
+                    <select id="salary-expectation" class="select-control">
+                      <option value="₹4-7 LPA">₹4 - ₹7 LPA (Standard Entry / Campus Placement)</option>
+                      <option value="₹8-14 LPA" selected>₹8 - ₹14 LPA (High-Demand Tech &amp; Corporate)</option>
+                      <option value="₹15-25 LPA">₹15 - ₹25 LPA (Top Product Startups / Tier-1 MBA)</option>
+                      <option value="₹25+ LPA">₹25+ LPA (Elite Quant, HFT, Global Remote, Tech)</option>
+                      <option value="Focus on Public Impact">Focus on Public Impact / Security over Package</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="preferred-cities">
+                      <i class="fa-solid fa-location-dot text-indigo"></i> Preferred Work Location / Indian Hub
+                    </label>
+                    <select id="preferred-cities" class="select-control">
+                      <option value="Bengaluru / Hyderabad (Tech Capital)">Bengaluru / Hyderabad (Silicon Hub)</option>
+                      <option value="Mumbai / Pune (Financial & Auto Hub)">Mumbai / Pune (Financial &amp; Commercial)</option>
+                      <option value="Delhi-NCR / Gurgaon / Noida">Delhi-NCR (Gurgaon / Noida / Delhi)</option>
+                      <option value="100% Remote in India">100% Remote / Anywhere in India</option>
+                      <option value="Pan-India / Flexible Posting">Pan-India / Flexible (e.g., Govt/PSU)</option>
+                      <option value="Global / Relocate Abroad Later">Open to Global Relocation (US/EU/Dubai)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fa-solid fa-pen-to-square"></i> Indian Competitive Exams under consideration (if any):
+                  </label>
+                  <div class="checkbox-pills-row" id="exam-pills-group">
+                    <button type="button" class="exam-pill" data-exam="CAT / XAT (MBA)">CAT / XAT (IIMs &amp; Top B-Schools)</button>
+                    <button type="button" class="exam-pill" data-exam="UPSC CSE (Civil Services)">UPSC CSE (IAS/IPS/IFS)</button>
+                    <button type="button" class="exam-pill" data-exam="GATE (M.Tech / PSUs)">GATE (IITs / PSUs)</button>
+                    <button type="button" class="exam-pill" data-exam="JEE (Engineering)">JEE Main / Adv</button>
+                    <button type="button" class="exam-pill" data-exam="CLAT (Law)">CLAT (NLUs)</button>
+                    <button type="button" class="exam-pill" data-exam="CA / CFA">CA / CFA</button>
+                    <button type="button" class="exam-pill active" data-exam="Direct Job / Campus Hiring">Direct Industry Job / No Exams</button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="user-custom-notes">
+                    <i class="fa-solid fa-comment-dots"></i> Any specific dilemmas, background notes, or constraints? <small class="text-muted">(Optional)</small>
+                  </label>
+                  <textarea id="user-custom-notes" class="textarea-control" rows="3" placeholder="e.g. 'I am from a tier-3 college but have good coding skills', or 'I want to shift from B.Com to Data Analytics without heavy programming', or 'Deciding whether to take a drop year for UPSC.'"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ANALYZING / LOADING SCREEN -->
+            <div class="wizard-analyzing-screen hidden" id="wizard-analyzing">
+              <div class="analyzing-visual">
+                <div class="pulse-ring"></div>
+                <div class="analyzing-icon"><i class="fa-solid fa-brain fa-bounce"></i></div>
+              </div>
+              <h3 class="analyzing-title">CareerSetu AI is analyzing your profile...</h3>
+              <p class="analyzing-subtitle" id="analyzing-status-text">Matching your interests against 30+ Indian industry compensation matrices...</p>
+              
+              <div class="analyzing-ticker">
+                <div class="ticker-item"><i class="fa-solid fa-check text-emerald"></i> Education &amp; Strengths mapped</div>
+                <div class="ticker-item"><i class="fa-solid fa-spinner fa-spin text-indigo"></i> Evaluating 2026 Indian compensation curves (₹ LPA)...</div>
+                <div class="ticker-item"><i class="fa-solid fa-clock text-muted"></i> Generating personalized milestones &amp; college routes...</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Wizard Footer Controls -->
+          <div class="wizard-footer" id="wizard-footer-controls">
+            <button type="button" class="btn btn-secondary" id="btn-wizard-prev" onclick="goToPreviousStep()" style="display: none;">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>Back</span>
+            </button>
+
+            <div class="footer-spacer"></div>
+
+            <button type="button" class="btn btn-ghost" onclick="resetAssessmentConfirm()">
+              <i class="fa-solid fa-rotate-left"></i>
+              <span>Reset</span>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-glow" id="btn-wizard-next" onclick="goToNextStep()">
+              <span>Continue</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== AI CAREER RECOMMENDATIONS DASHBOARD ==================== -->
+    <section class="dashboard-section hidden" id="recommendations">
+      <div class="container">
+        
+        <!-- Dashboard Top Banner -->
+        <div class="dashboard-header-card card-glass">
+          <div class="dashboard-header-main">
+            <div>
+              <div class="section-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Tailored Matches</div>
+              <h2 class="section-title">Your Top Career Pathways</h2>
+              <p class="section-desc" id="profile-summary-pills">
+                Based on your profile: <strong id="summary-education-tag">Undergraduate</strong> • 
+                <span id="summary-interests-preview">Technology &amp; Finance</span>
+              </p>
+            </div>
+            <div class="dashboard-actions">
+              <button class="btn btn-secondary btn-sm" onclick="startAssessmentFlow()">
+                <i class="fa-solid fa-sliders"></i> Adjust Inputs
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleMentorDrawer('Can you compare my top 2 recommended career paths?')">
+                <i class="fa-solid fa-robot"></i> Compare via AI
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="dashboard-filters-bar">
+            <div class="filter-group">
+              <label class="filter-label"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort By:</label>
+              <button class="filter-chip active" onclick="sortRecommendations('match', event)">Highest Match</button>
+              <button class="filter-chip" onclick="sortRecommendations('salary', event)">Highest Salary (₹ LPA)</button>
+              <button class="filter-chip" onclick="sortRecommendations('growth', event)">Market Demand</button>
+            </div>
+            <div class="match-count-badge">
+              <span id="match-count-num">4</span> Careers Identified
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommendations Cards Grid -->
+        <div class="recommendations-grid" id="recommendations-cards-container">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Alternative Advice Box -->
+        <div class="explore-more-box card-glass">
+          <div class="explore-content">
+            <div class="explore-icon"><i class="fa-solid fa-lightbulb text-amber"></i></div>
+            <div>
+              <h4>Want to explore a specific Indian career not listed above?</h4>
+              <p>Ask our AI Mentor about any niche: Actuarial Science, Merchant Navy, Indian Forest Service, Wildlife Conservation, Game Development, or Film Direction.</p>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="toggleMentorDrawer('Tell me about career prospects, entrance exams, and salaries for: ')">
+            <span>Ask Custom Question</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== SAVED PATHS & ACTION PLAN TRACKER ==================== -->
+    <section class="saved-section" id="saved">
+      <div class="container">
+        
+        <div class="section-header-row">
+          <div>
+            <div class="section-tag"><i class="fa-solid fa-bookmark"></i> Personal Career Hub</div>
+            <h2 class="section-title">Saved Careers &amp; Action Plan</h2>
+            <p class="section-desc">Track your bookmarked paths and check off recommended skills and milestones.</p>
+          </div>
+          <div class="saved-stats-pill">
+            <span class="saved-count-indicator" id="action-plan-completion-stat">0 of 0 Milestones Completed</span>
+          </div>
+        </div>
+
+        <div class="saved-hub-grid">
+          
+          <!-- Left Column: Bookmarked Careers -->
+          <div class="saved-careers-col">
+            <h3 class="col-title"><i class="fa-solid fa-star text-amber"></i> Bookmarked Career Paths (<span id="saved-cards-count">0</span>)</h3>
+            <div class="saved-cards-list" id="saved-cards-list">
+              <!-- Empty state or saved cards -->
+              <div class="empty-state-box" id="saved-empty-state">
+                <div class="empty-icon"><i class="fa-regular fa-bookmark"></i></div>
+                <h4>No saved careers yet</h4>
+                <p>Complete the assessment and click the bookmark button on any career card to save it here.</p>
+                <button class="btn btn-secondary btn-sm" onclick="startAssessmentFlow()">Start Assessment</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Action Checklist -->
+          <div class="action-plan-col card-glass">
+            <div class="action-plan-header">
+              <div>
+                <h3 class="col-title"><i class="fa-solid fa-list-check text-emerald"></i> My Indian Career Action Plan</h3>
+                <p class="col-subtitle">Check off milestones as you build skills, pass exams, and create projects.</p>
+              </div>
+              <div class="plan-progress-circle-wrap">
+                <div class="progress-bar-track small">
+                  <div class="progress-bar-fill emerald" id="checklist-progress-bar" style="width: 0%;"></div>
+                </div>
+                <span class="checklist-pct" id="checklist-pct-label">0% Done</span>
+              </div>
+            </div>
+
+            <!-- New Task Input -->
+            <form class="add-task-form" id="add-task-form" onsubmit="handleCustomTaskAdd(event)">
+              <input type="text" id="custom-task-input" class="input-control" placeholder="Add custom goal (e.g. 'Register for CAT on iimcat.ac.in', 'Learn SQL on LeetCode')..." required>
+              <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-plus"></i> Add
+              </button>
+            </form>
+
+            <!-- Checklist Items List -->
+            <div class="action-checklist" id="action-checklist-container">
+              <!-- Dynamically populated from saved paths + custom items -->
+            </div>
+
+            <div class="checklist-footer">
+              <button class="btn btn-ghost btn-xs text-muted" onclick="clearCompletedMilestones()">
+                <i class="fa-solid fa-trash-can"></i> Clear Completed
+              </button>
+              <button class="btn btn-ghost btn-xs text-indigo" onclick="resetDefaultMilestones()">
+                <i class="fa-solid fa-rotate"></i> Reload Recommended Milestones
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== CAREER ROADMAP MODAL / DRAWER ==================== -->
+  <div class="modal-backdrop" id="roadmap-modal" role="dialog" aria-modal="true" aria-labelledby="modal-career-title">
+    <div class="roadmap-modal-card card-glass">
+      
+      <!-- Modal Top Bar -->
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <div class="modal-badges-row">
+            <span class="badge-match" id="modal-match-badge">94% Match</span>
+            <span class="badge-growth" id="modal-growth-badge">High Demand in India</span>
+            <span class="badge-tag" id="modal-category-badge">Technology</span>
+          </div>
+          <h2 class="modal-career-title" id="modal-career-title">AI &amp; Machine Learning Engineer</h2>
+          <p class="modal-career-subtitle" id="modal-career-subtitle">Building intelligent algorithms, neural networks, and scalable automated systems.</p>
+        </div>
+        <button class="icon-btn modal-close-btn" onclick="closeRoadmapModal()" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Content -->
+      <div class="modal-scroll-body">
+
+        <!-- Salary Progression in India -->
+        <div class="modal-section salary-breakdown-card">
+          <h4 class="section-subheading"><i class="fa-solid fa-indian-rupee-sign text-emerald"></i> Indian Compensation Trajectory (₹ LPA)</h4>
+          <div class="salary-ladder-grid">
+            <div class="salary-tier">
+              <span class="tier-label">Entry Level (0–2 yrs)</span>
+              <span class="tier-val" id="modal-salary-entry">₹8 - ₹15 LPA</span>
+              <span class="tier-note">Campus hire, junior dev, startup engineer</span>
+            </div>
+            <div class="salary-tier highlight">
+              <span class="tier-label">Mid-Level (3–6 yrs)</span>
+              <span class="tier-val" id="modal-salary-mid">₹18 - ₹32 LPA</span>
+              <span class="tier-note">Senior contributor, specialized track</span>
+            </div>
+            <div class="salary-tier">
+              <span class="tier-label">Senior / Lead (7+ yrs)</span>
+              <span class="tier-val" id="modal-salary-senior">₹35 - ₹65+ LPA</span>
+              <span class="tier-note">Staff engineer, engineering manager, equity</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-Stage Step-by-Step Educational & Skill Roadmap -->
+        <div class="modal-section">
+          <h4 class="section-subheading"><i class="fa-solid fa-route text-indigo"></i> Step-by-Step Action Roadmap for India</h4>
+          <div class="timeline-stepper" id="modal-timeline-container">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Entrance Exams & Top Indian Colleges -->
+        <div class="modal-section-grid">
+          <div class="modal-subcard">
+            <h5><i class="fa-solid fa-file-signature text-amber"></i> Key Indian Entrance Exams</h5>
+            <ul class="modal-bullet-list" id="modal-exams-list">
+              <!-- Populated via JS -->
+            </ul>
+          </div>
+          <div class="modal-subcard">
+            <h5><i class="fa-solid fa-building-columns text-cyan"></i> Top Indian Colleges &amp; Institutes</h5>
+            <ul class="modal-bullet-list" id="modal-colleges-list">
+              <!-- Populated via JS -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Pros & Cons in the Indian Market -->
+        <div class="modal-section-grid">
+          <div class="modal-subcard pros-card">
+            <h5><i class="fa-solid fa-circle-check text-emerald"></i> Key Advantages in India</h5>
+            <ul class="modal-bullet-list" id="modal-pros-list">
+              <!-- Populated via JS -->
+            </ul>
+          </div>
+          <div class="modal-subcard cons-card">
+            <h5><i class="fa-solid fa-triangle-exclamation text-rose"></i> Challenges &amp; Realistic Trade-offs</h5>
+            <ul class="modal-bullet-list" id="modal-cons-list">
+              <!-- Populated via JS -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Future Industry Outlook -->
+        <div class="modal-section outlook-box">
+          <h5><i class="fa-solid fa-chart-line text-indigo"></i> 5-Year Industry Outlook &amp; AI Impact in India</h5>
+          <p id="modal-outlook-text">Strong domestic market tailwinds backed by India's DPI initiatives, booming GCCs (Global Capability Centers), and venture funding.</p>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" id="modal-bookmark-toggle-btn" onclick="handleModalBookmarkToggle()">
+          <i class="fa-regular fa-bookmark"></i>
+          <span>Save to My Paths</span>
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="addModalRoadmapToMilestones()">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Add Roadmaps to Action Plan</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="askAiAboutCurrentModalRole()">
+          <i class="fa-solid fa-robot"></i>
+          <span>Ask AI Mentor About This Role</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== INTERACTIVE AI MENTOR CHAT DRAWER ==================== -->
+  <div class="mentor-drawer" id="mentor-drawer" aria-label="AI Career Mentor Chat Drawer">
+    <div class="mentor-header">
+      <div class="mentor-header-info">
+        <div class="mentor-avatar">
+          <i class="fa-solid fa-brain"></i>
+          <span class="online-indicator"></span>
+        </div>
+        <div>
+          <h3 class="mentor-title">Aarav — AI Career Mentor</h3>
+          <div class="mentor-status-pill" id="mentor-status-pill" onclick="openApiModal()" title="Click to change AI Provider or test API keys">
+            <span class="status-dot"></span>
+            <span id="mentor-status-text">Built-in AI</span>
+            <i class="fa-solid fa-sliders" style="font-size: 0.65rem; opacity: 0.7;"></i>
+          </div>
+        </div>
+      </div>
+      <div class="mentor-header-tools">
+        <button class="icon-btn" onclick="openApiModal()" title="LLM API Settings"><i class="fa-solid fa-gear"></i></button>
+        <button class="icon-btn" onclick="clearMentorChatHistory()" title="Clear Chat"><i class="fa-solid fa-trash-can"></i></button>
+        <button class="icon-btn" onclick="toggleMentorDrawer()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+
+    <!-- Suggested Quick Prompts -->
+    <div class="quick-prompts-bar">
+      <span class="quick-prompts-title"><i class="fa-solid fa-bolt text-amber"></i> Quick Prompts:</span>
+      <div class="quick-prompts-list">
+        <button class="chip-prompt" onclick="sendQuickPrompt('How do I transition from B.Com to Data Analytics in India without heavy coding?')">
+          B.Com to Data Analytics?
+        </button>
+        <button class="chip-prompt" onclick="sendQuickPrompt('Compare CA vs. CFA in India: salary, difficulty, and job profiles.')">
+          Compare CA vs. CFA in India
+        </button>
+        <button class="chip-prompt" onclick="sendQuickPrompt('How can a tier-3 engineering student crack top product company off-campus placements?')">
+          Tier-3 engineer to Top Tech?
+        </button>
+        <button class="chip-prompt" onclick="sendQuickPrompt('Is UPSC worth taking a drop year for, or should I keep a corporate job backup?')">
+          UPSC drop year vs Corporate backup?
+        </button>
+        <button class="chip-prompt" onclick="sendQuickPrompt('What is the realistic roadmap to become a Product Manager in India without an MBA?')">
+          PM role without MBA?
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div class="mentor-messages-container" id="mentor-messages">
+      <div class="chat-bubble ai">
+        <div class="bubble-sender"><i class="fa-solid fa-brain"></i> Aarav AI</div>
+        <div class="bubble-text">
+          Namaste! I'm your dedicated AI Career Advisor. I understand the nuances of the Indian job market, competitive exams (JEE, NEET, CAT, UPSC), tier-1 vs tier-3 realities, and realistic ₹ LPA salary progressions.
+          <br><br>
+          Feel free to ask any career dilemma, or click one of the quick prompts above to get started!
+        </div>
+        <span class="bubble-time">Just now</span>
+      </div>
+    </div>
+
+    <!-- Chat Input Form -->
+    <form class="mentor-input-form" id="mentor-chat-form" onsubmit="handleMentorChatSubmit(event)">
+      <div class="chat-input-wrapper">
+        <textarea id="mentor-chat-input" class="chat-textarea" rows="1" placeholder="Ask about salaries, exams, switching streams, or colleges in India..." onkeydown="handleChatInputKeydown(event)"></textarea>
+        <button type="submit" class="chat-send-btn" id="mentor-send-btn" aria-label="Send message">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="chat-disclaimer">
+        <span id="chat-engine-label">Powered by Indian Career Knowledge Engine</span> • Press Enter to send
+      </div>
+    </form>
+  </div>
+  <div class="backdrop" id="mentor-backdrop" onclick="toggleMentorDrawer()"></div>
+
+  <!-- Floating Mentor Trigger Button -->
+  <button class="floating-mentor-trigger" id="floating-mentor-btn" onclick="toggleMentorDrawer()" aria-label="Open AI Career Mentor">
+    <div class="floating-icon-wrap">
+      <i class="fa-solid fa-robot"></i>
+      <span class="online-dot"></span>
+    </div>
+    <span class="floating-label">Ask AI Mentor</span>
+  </button>
+
+  <!-- ==================== API SETTINGS MODAL ==================== -->
+  <div class="modal-backdrop" id="api-modal" role="dialog" aria-modal="true" aria-labelledby="api-modal-title">
+    <div class="api-modal-card card-glass">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="api-modal-title"><i class="fa-solid fa-sliders text-indigo"></i> AI Mentor &amp; LLM Configuration</h3>
+          <p class="modal-subtitle">Connect your Google Gemini, OpenAI, Groq, or OpenRouter API key for live AI answers.</p>
+        </div>
+        <button class="icon-btn" onclick="closeApiModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="api-modal-body">
+        <div class="api-notice-box">
+          <i class="fa-solid fa-shield-halved text-emerald"></i>
+          <div>
+            <strong>100% Client-Side Privacy:</strong> Your API key is stored only inside your browser's <code>localStorage</code>. It is called directly from your browser and never sent to any intermediate server.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="api-provider-select">Select AI Intelligence Engine</label>
+          <select id="api-provider-select" class="select-control" onchange="handleApiProviderChange()">
+            <option value="builtin">Built-in Curated Indian Career Engine (No API Key Required &bull; Fast)</option>
+            <option value="gemini">Google Gemini API (Free tier from Google AI Studio &bull; Recommended)</option>
+            <option value="openai">OpenAI API (GPT-4o mini / GPT-4o)</option>
+            <option value="groq">Groq Cloud (Ultra-Fast Llama 3.3 70B &bull; Free tier)</option>
+            <option value="openrouter">OpenRouter (DeepSeek V3, Claude, Llama &bull; Unified)</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="api-key-input-group" style="display: none;">
+          <div class="label-with-badge">
+            <label class="form-label" for="custom-api-key">API Key</label>
+            <span class="key-format-indicator" id="key-format-indicator"></span>
+          </div>
+          <div class="password-input-wrap">
+            <input type="password" id="custom-api-key" class="input-control font-mono" placeholder="Paste your API key here..." oninput="handleApiKeyInputValidate()">
+            <button type="button" class="icon-btn pass-toggle" onclick="toggleApiKeyVisibility()"><i class="fa-solid fa-eye" id="api-eye-icon"></i></button>
+          </div>
+          <div class="api-key-warning-pill" id="api-key-warning-pill"></div>
+          <small class="form-help-text" id="api-key-help-link">
+            Get a free Gemini key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+          </small>
+        </div>
+
+        <div class="form-group" id="api-model-group" style="display: none;">
+          <label class="form-label" for="custom-model-select">Model Selection</label>
+          <div class="model-selection-row">
+            <select id="custom-model-select" class="select-control" onchange="handleModelSelectChange()">
+              <!-- Dynamic options populated in app.js -->
+            </select>
+            <input type="text" id="custom-model-name" class="input-control font-mono" placeholder="Or type custom model name..." style="display:none; margin-top: 0.5rem;">
+          </div>
+        </div>
+
+        <!-- Real-time Test Connection Feedback Card -->
+        <div id="api-test-result" class="api-test-result" style="display: none;"></div>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-secondary btn-sm" onclick="clearApiKeySettings()">
+            <i class="fa-solid fa-trash-can"></i> Clear Key
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-test-connection" onclick="testCurrentApiConnection()">
+            <i class="fa-solid fa-plug-circle-bolt text-indigo"></i> Test Connection
+          </button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="saveApiKeySettings()">
+          <i class="fa-solid fa-check"></i> Save &amp; Connect
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="app-footer">
+    <div class="container footer-container">
+      <div class="footer-brand-col">
+        <div class="brand">
+          <div class="brand-logo small"><i class="fa-solid fa-compass-drafting"></i></div>
+          <span class="brand-name">Career<span class="gradient-text">Setu</span> AI</span>
+        </div>
+        <p class="footer-desc">
+          Empowering Indian youth with transparent, realistic career direction, salary benchmarks in ₹ LPA, and actionable skill roadmaps.
+        </p>
+        <div class="footer-badges">
+          <span class="tech-tag">HTML5 &bull; CSS3 &bull; Vanilla JS</span>
+          <span class="tech-tag">Made for 🇮🇳</span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5 class="footer-col-title">Career Hubs in India</h5>
+        <ul class="footer-links">
+          <li><a href="#assessment" onclick="quickFilterFromHero('Artificial Intelligence & Machine Learning')">AI &amp; Data Science (Bengaluru/Hyd)</a></li>
+          <li><a href="#assessment" onclick="quickFilterFromHero('Investment Banking & Equity Research')">FinTech &amp; Banking (Mumbai/Ggn)</a></li>
+          <li><a href="#assessment" onclick="quickFilterFromHero('Product Management')">Product Management (Bengaluru)</a></li>
+          <li><a href="#assessment" onclick="quickFilterFromHero('Civil Services Officer (IAS/IPS/IFS)')">Civil Services (UPSC CSE)</a></li>
+          <li><a href="#assessment" onclick="quickFilterFromHero('Corporate & Tech Law')">Corporate Law (NLUs / Mumbai)</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5 class="footer-col-title">Entrance Exams</h5>
+        <ul class="footer-links">
+          <li><span>JEE Main &amp; Advanced (IITs/NITs)</span></li>
+          <li><span>CAT &amp; XAT (IIMs &amp; XLRI)</span></li>
+          <li><span>UPSC Civil Services (IAS/IPS)</span></li>
+          <li><span>GATE (M.Tech / PSU Maharatnas)</span></li>
+          <li><span>CLAT &amp; AILET (Law NLUs)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div class="container footer-bottom-inner">
+        <span>&copy; 2026 CareerSetu AI. Designed specifically for India.</span>
+        <span class="disclaimer-text">Educational and career estimates are indicative benchmarks based on Indian market trends.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>
+
